@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block content %}
+<strong style="margin-bottom: 1rem">New Paste</strong>
+<form method="post">
+  <textarea
+    name="body"
+    rows="10"
+    cols="50"
+    required
+    placeholder="Paste your text here..."
+  ></textarea>
+  <br />
+  <select name="language" required>
+    {% for code, name in languages %}
+    <option value="{{ code }}">{{ name }}</option>
+    {% endfor %}
+  </select>
+  <br />
+  <button type="submit">Submit</button>
+</form>
+{% if pastes %}
+<hr />
+<strong>Latest Pastes</strong>
+<ul style="list-style-type: none; margin-left: -2rem">
+  {% for p in pastes %}
+  <li>
+    🌐 <a href="{{ url_for('paste', id=p.id) }}">{{ p.id }}</a>
+    <small> | {{ p.language }} | {{ p.timestamp.strftime('%Y-%m-%d') }} </small>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %} {% endblock %}

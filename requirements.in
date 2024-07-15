@@ -1,0 +1,4 @@
+aiosqlite
+flask[async]
+flask-sqlalchemy
+pygments

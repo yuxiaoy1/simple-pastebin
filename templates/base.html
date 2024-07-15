@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Pastebin</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+    {% block style %} {% endblock %}
+  </head>
+  <body>
+    <h3>
+      <a style="text-decoration: none" href="{{ url_for('index') }}">
+        Simple Pastebin
+      </a>
+    </h3>
+    {% block content %} {% endblock %}
+  </body>
+</html>

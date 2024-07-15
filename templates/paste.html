@@ -1,0 +1,44 @@
+{% extends 'base.html' %} {% block style %}
+<style>
+  {{ highlight_css|safe }}
+
+  button.copy {
+    position: absolute;
+    top: 2rem;
+    right: 1rem;
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  button.copy:hover {
+    background-color: #309334;
+  }
+</style>
+{% endblock %} {% block content %}
+<p>
+  Your paste URL:
+  <a href="{{ request.url }}">{{ request.url }}</a>
+</p>
+<div class="highlight" style="position: relative">
+  {{ highlight_body|safe }}
+  <button class="copy">copy</button>
+</div>
+<script>
+  let copyBtn = document.querySelector('.copy')
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(
+        document.querySelector('.highlight > :not(button)').textContent
+      )
+      copyBtn.textContent = 'copied!'
+    } catch (err) {
+      alert('Copy failed:', err)
+    }
+  })
+</script>
+{% endblock %}
