@@ -1,4 +1,5 @@
 aiosqlite
 flask[async]
 flask-sqlalchemy
+flask-wtf
 pygments

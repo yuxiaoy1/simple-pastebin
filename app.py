@@ -3,20 +3,35 @@ from base64 import urlsafe_b64encode
 from datetime import datetime, timezone
 from os import path, urandom
 
-from flask import Flask, abort, redirect, render_template, request, url_for
+from flask import Flask, abort, redirect, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_all_lexers, get_lexer_by_name
 from sqlalchemy import Text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Mapped, mapped_column
+from wtforms import SelectField, TextAreaField
+from wtforms.validators import DataRequired
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "top secret!"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite+aiosqlite:///" + path.join(
     path.abspath(path.dirname(__file__)), "db.sqlite"
 )
 db = SQLAlchemy(app)
+
+
+class PasteForm(FlaskForm):
+    body = TextAreaField("Body", validators=[DataRequired()])
+    language = SelectField("Language")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.language.choices = sorted(
+            [(lexer[1][0], lexer[0]) for lexer in get_all_lexers() if lexer[1]]
+        )
 
 
 class Paste(db.Model):
@@ -41,25 +56,18 @@ with app.app_context():
     asyncio.run(initdb())
 
 
-languages = sorted([(lexer[1][0], lexer[0]) for lexer in get_all_lexers() if lexer[1]])
-
-
 @app.route("/", methods=["GET", "POST"])
 async def index():
     async with db.Session() as session:
-        if request.method == "POST":
-            paste = Paste(body=request.form["body"], language=request.form["language"])
+        form = PasteForm()
+        if form.validate_on_submit():
+            paste = Paste(body=form.body.data, language=form.language.data)
             session.add(paste)
             await session.commit()
             return redirect(url_for("paste", id=paste.id))
-        _pastes = await session.stream_scalars(
-            db.select(Paste).order_by(Paste.timestamp.desc()).limit(10)
-        )
-        return render_template(
-            "index.html",
-            languages=languages,
-            pastes=[p async for p in _pastes],
-        )
+        query = db.select(Paste).order_by(Paste.timestamp.desc()).limit(10)
+        pastes = [paste async for paste in await session.stream_scalars(query)]
+        return render_template("index.html", form=form, pastes=pastes)
 
 
 @app.get("/<id>")

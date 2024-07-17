@@ -1,19 +1,10 @@
 {% extends 'base.html' %} {% block content %}
 <strong style="margin-bottom: 1rem">New Paste</strong>
 <form method="post">
-  <textarea
-    name="body"
-    rows="10"
-    cols="50"
-    required
-    placeholder="Paste your text here..."
-  ></textarea>
+  {{ form.csrf_token }} {{ form.body(placeholder='Paste your text here...',
+  rows=10) }}
   <br />
-  <select name="language" required>
-    {% for code, name in languages %}
-    <option value="{{ code }}">{{ name }}</option>
-    {% endfor %}
-  </select>
+  {{ form.language }}
   <br />
   <button type="submit">Submit</button>
 </form>
