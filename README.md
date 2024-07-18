@@ -1,4 +1,4 @@
-### Simple Pastebin
+## Simple Pastebin
 
 A simple pastbin app built with async flask and friends.
 
