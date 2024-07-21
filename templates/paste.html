@@ -22,7 +22,9 @@
 {% endblock %} {% block content %}
 <p>
   Your paste URL:
-  <a href="{{ request.url }}">{{ request.url }}</a>
+  <a href="{{ url_for('paste', id=paste.id, _external=True) }}"
+    >{{ url_for('paste', id=paste.id, _external=True) }}</a
+  >
 </p>
 <div class="highlight" style="position: relative">
   {{ highlight_body|safe }}

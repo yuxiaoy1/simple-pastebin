@@ -81,7 +81,10 @@ async def paste(id):
         highlight_body = highlight(paste.body, lexer, formatter)
         highlight_css = formatter.get_style_defs(".source")
         return render_template(
-            "paste.html", highlight_body=highlight_body, highlight_css=highlight_css
+            "paste.html",
+            paste=paste,
+            highlight_body=highlight_body,
+            highlight_css=highlight_css,
         )
 
 
