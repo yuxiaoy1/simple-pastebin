@@ -1,7 +1,8 @@
 import asyncio
 from base64 import urlsafe_b64encode
 from datetime import datetime, timezone
-from os import path, urandom
+from os import urandom
+from pathlib import Path
 
 from flask import Flask, abort, redirect, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -17,8 +18,8 @@ from wtforms.validators import DataRequired
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "top secret!"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite+aiosqlite:///" + path.join(
-    path.abspath(path.dirname(__file__)), "db.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"sqlite+aiosqlite:///{Path(__file__).parent / 'db.sqlite'}"
 )
 db = SQLAlchemy(app)
 
